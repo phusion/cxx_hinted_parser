@@ -66,3 +66,30 @@ parser.errors[0].line     # => 8
 parser.errors[0].column   # => 22
 parser.errors[0].message  # => "Unable to parse field name and type"
 ~~~
+
+### Metadata
+
+You can attach arbitrary metadata to a field by specifying them in the comments in the form of `@key value`. Metadata must appear *after* `@hinted_parseable`.
+
+Example:
+
+~~~c++
+// - begin hinted parseable class -
+class Foo {
+    // @hinted_parseable
+    // @author Joe
+    // @written_on 2016-05-22
+    // @serialize
+    int field1;
+};
+// - end hinted parseable class -
+~~~
+
+You can access the metadata in the parser through the `metadata` method:
+
+~~~ruby
+parser.structs['Foo'][0].metadata
+# => { :author => "Joe",
+#      :written_on => "2016-05-22",
+#      :serialize => true }
+~~~

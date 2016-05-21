@@ -63,7 +63,7 @@ module CxxHintedParser
     end
 
   private
-    Field = Struct.new(:type, :name)
+    Field = Struct.new(:type, :name, :metadata)
     Error = Struct.new(:line, :column, :message)
 
     def index_line_endings
@@ -89,7 +89,7 @@ module CxxHintedParser
         error 'Class/struct begin hint encountered, but previous class/struct begin hint was never ended'
       end
 
-      skip_until_end_of_comment
+      process_until_end_of_comment
       regex = /(class|struct)\s+(\w+)/m
       if match = @scanner.scan_until(regex)
         match =~ regex
@@ -109,7 +109,7 @@ module CxxHintedParser
     end
 
     def process_field_hint
-      skip_until_end_of_comment
+      metadata = process_until_end_of_comment
       @scanner.skip(/\s+/m)
       begin_pos = @scanner.pos
 
@@ -128,7 +128,7 @@ module CxxHintedParser
           type = strip_attribute(type)
 
           if @current_struct
-            @structs[@current_struct] << Field.new(type, name)
+            @structs[@current_struct] << Field.new(type, name, metadata)
           else
             temporarily_set_pos(begin_pos) do
               error 'Field hint encountered, but no corresponding class/struct begin hint was found'
@@ -140,7 +140,10 @@ module CxxHintedParser
       end
     end
 
-    def skip_until_end_of_comment
+    def process_until_end_of_comment
+      begin_pos = @scanner.pos
+
+      # Skip until end of comment
       @scanner.pre_match =~ /.*\n(.*)\Z/m
       last_line = $1
       if last_line =~ /^\s*\/\//
@@ -156,6 +159,26 @@ module CxxHintedParser
         # Assume multi-line comment
         @scanner.skip_until(/\*\//)
       end
+
+      end_pos = @scanner.pos
+
+      # Extract all metadata from the location where
+      # we encountered `@hinted_parseable` until end
+      # of comment
+      metadata = {}
+      @str[begin_pos..end_pos].split("\n").each do |line|
+        if line =~ /^[\s\*\/]*@(\w+)(.*)$/
+          key = $1
+          value = $2.strip
+          if value.empty?
+            metadata[key.to_sym] = true
+          else
+            metadata[key.to_sym] = value
+          end
+        end
+      end
+
+      metadata
     end
 
     def strip_attribute(type)

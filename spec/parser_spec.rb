@@ -38,58 +38,72 @@ describe Parser do
 
     expect(foo[i].type).to eq('int')
     expect(foo[i].name).to eq('oneWordType')
+    expect(foo[i].metadata).to eq({})
     i += 1
 
     expect(foo[i].type).to eq('unsigned int')
     expect(foo[i].name).to eq('twoWordsType')
+    expect(foo[i].metadata).to eq({})
     i += 1
 
     expect(foo[i].type).to eq('char')
     expect(foo[i].name).to eq('fieldWithAttribute')
+    expect(foo[i].metadata).to eq({})
     i += 1
 
     expect(foo[i].type).to eq('int')
     expect(foo[i].name).to eq('multiLineComment')
+    expect(foo[i].metadata).to eq({})
     i += 1
 
     expect(foo[i].type).to eq('int')
     expect(foo[i].name).to eq('multipleSingleLineComments')
+    expect(foo[i].metadata).to eq({})
     i += 1
 
     expect(foo[i].type).to eq('int')
     expect(foo[i].name).to eq('moreCommentsAfterHint')
+    expect(foo[i].metadata).to eq({})
     i += 1
 
     expect(foo[i].type).to eq('int')
     expect(foo[i].name).to eq('moreSingleLineCommentsAfterHint')
+    expect(foo[i].metadata).to eq({})
     i += 1
 
     expect(foo[i].type).to eq('int')
     expect(foo[i].name).to eq('bitfield')
+    expect(foo[i].metadata).to eq({})
     i += 1
 
     expect(foo[i].type).to eq('void *')
     expect(foo[i].name).to eq('pointer')
+    expect(foo[i].metadata).to eq({})
     i += 1
 
     expect(foo[i].type).to eq('set<string>')
     expect(foo[i].name).to eq('templateType')
+    expect(foo[i].metadata).to eq({})
     i += 1
 
     expect(foo[i].type).to eq('char []')
     expect(foo[i].name).to eq('array')
+    expect(foo[i].metadata).to eq({})
     i += 1
 
     expect(foo[i].type).to eq('const int')
     expect(foo[i].name).to eq('constField')
+    expect(foo[i].metadata).to eq({})
     i += 1
 
     expect(foo[i].type).to eq('const int const')
     expect(foo[i].name).to eq('constConstField')
+    expect(foo[i].metadata).to eq({})
     i += 1
 
     expect(foo[i].type).to eq('const char * const * []')
     expect(foo[i].name).to eq('constConstCharArray')
+    expect(foo[i].metadata).to eq({})
     i += 1
   end
 
@@ -105,6 +119,26 @@ describe Parser do
     i += 1
 
     expect(errors[i].message).to match(/no corresponding class\/struct begin hint/)
+    i += 1
+  end
+
+  it 'extracts metadata' do
+    parser = Parser.load_file("#{SPEC_DIR}/ExampleWithMetadata.cpp").parse
+    expect(parser.structs.keys).to contain_exactly('Foo')
+    expect(parser.errors.size).to eq(0)
+
+    foo = parser.structs['Foo']
+    expect(foo.size).to eq(2)
+    i = 0
+
+    expect(foo[i].type).to eq('int')
+    expect(foo[i].name).to eq('simple')
+    expect(foo[i].metadata).to eq(author: 'Joe', date: 'today', flag1: true)
+    i += 1
+
+    expect(foo[i].type).to eq('int')
+    expect(foo[i].name).to eq('complex')
+    expect(foo[i].metadata).to eq(author: 'Jane', date: 'tomorrow', flag2: true)
     i += 1
   end
 end
