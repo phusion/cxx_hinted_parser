@@ -145,7 +145,13 @@ module CxxHintedParser
       last_line = $1
       if last_line =~ /^\s*\/\//
         # Single-line comment
-        @scanner.skip_until(/\n/m)
+        done = false
+        while !done
+          # Skip until next line
+          @scanner.skip_until(/\n/m)
+          # Is this also another comment? If so, continue looping
+          done = @scanner.post_match !~ /\A\s*\/\//
+        end
       else
         # Assume multi-line comment
         @scanner.skip_until(/\*\//)

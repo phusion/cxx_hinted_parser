@@ -33,7 +33,7 @@ describe Parser do
     expect(parser.errors.size).to eq(0)
 
     foo = parser.structs['Foo']
-    expect(foo.size).to eq(12)
+    expect(foo.size).to eq(14)
     i = 0
 
     expect(foo[i].type).to eq('int')
@@ -53,7 +53,15 @@ describe Parser do
     i += 1
 
     expect(foo[i].type).to eq('int')
-    expect(foo[i].name).to eq('commentsAfterHint')
+    expect(foo[i].name).to eq('multipleSingleLineComments')
+    i += 1
+
+    expect(foo[i].type).to eq('int')
+    expect(foo[i].name).to eq('moreCommentsAfterHint')
+    i += 1
+
+    expect(foo[i].type).to eq('int')
+    expect(foo[i].name).to eq('moreSingleLineCommentsAfterHint')
     i += 1
 
     expect(foo[i].type).to eq('int')

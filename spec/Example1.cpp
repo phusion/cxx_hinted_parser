@@ -20,6 +20,11 @@ struct Foo {
 	 */
 	int multiLineComment;
 
+	// This is a description.
+	//
+	// @hinted_parseable
+	int multipleSingleLineComments;
+
 	/**
 	 * This is a description.
 	 *
@@ -27,7 +32,14 @@ struct Foo {
 	 *
 	 * More text.
 	 */
-	int commentsAfterHint;
+	int moreCommentsAfterHint;
+
+	// This is a description.
+	//
+	// @hinted_parseable
+	//
+	// More text.
+	int moreSingleLineCommentsAfterHint;
 
 	// @hinted_parseable
 	int bitfield: 8;
