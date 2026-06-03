@@ -45,7 +45,7 @@ module CxxHintedParser
       @scanner = StringScanner.new(str)
       @structs = {}
       @errors = []
-      @newline_positions = [0]
+      @newline_positions = [ 0 ]
     end
 
     def parse
@@ -199,7 +199,7 @@ module CxxHintedParser
         name.gsub!(/\[.*?\]+$/, '')
       end
 
-      [type, name]
+      [ type, name ]
     end
 
     def temporarily_set_pos(pos)
@@ -225,9 +225,9 @@ module CxxHintedParser
       end
 
       if @newline_positions[low] == pos
-        [low + 1, pos - @newline_positions[low] + 1]
+        [ low + 1, pos - @newline_positions[low] + 1 ]
       else
-        [high + 1, pos - @newline_positions[high] + 1]
+        [ high + 1, pos - @newline_positions[high] + 1 ]
       end
     end
 
