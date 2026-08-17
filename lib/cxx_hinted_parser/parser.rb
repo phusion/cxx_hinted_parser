@@ -25,6 +25,7 @@
 require 'strscan'
 
 module CxxHintedParser
+
   class Parser
     STRUCT_BEGIN_HINT = /- ?begin hinted parseable (struct|class) ?-/
     STRUCT_END_HINT = /- ?end hinted parseable (struct|class) ?-/
@@ -236,4 +237,5 @@ module CxxHintedParser
       @errors << Error.new(line, column, message)
     end
   end
+
 end
